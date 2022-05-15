@@ -249,39 +249,102 @@ int main()
 
 //--------------优雅的警戒线 以上为雷区 非专业 勿进------------------// 
 //TODO: 2 全局变量声明位置 
+IMAGE imgBG;
+IMAGE imgApple;
+IMAGE imgBody;
+IMAGE imgHead[4];
 
-
+int fangxiang=1;//蛇头的方向 1上 2左 3下 0右
+int appleLie = 5;//苹果所在列
+int appleHang = 4;//苹果所在行
+int snakehang[100] = {10,11,12,13,14};
+int snakelie[100] = { 10,10,10,10,10 };
+int snakeLength = 5;
 //TODO: 3 游戏初始化位置  
 void gameInit()
 {
+	srand((unsigned)time(0));
+	appleLie = rand() % 16 + 2;
+	appleHang = rand() % 16 + 2;
 
+
+	loadimage(&imgBG, L".\\she\\bg.bmp");
+	loadimage(&imgApple, L".\\she\\apple.bmp");
+	loadimage(&imgBody, L".\\she\\body.bmp");
+	TCHAR str[100];
+	for (int i=0;i<4;i++)
+	{
+		_stprintf(str, L".\\she\\head%d.bmp", i);
+		loadimage(imgHead +i, str);
+	}
 }
 //TODO: 4 绘图处理位置  
 void gamePaint()
 {
-	IMAGE imgBG;
-	loadimage(&imgBG, L".\\she\\bg.bmp");
+
 	putimage(0, 0, &imgBG);
-
-	IMAGE imgApple;
-	loadimage(&imgApple, L".\\she\\apple.bmp");
-	putimage(5 * 30, 4 * 30, &imgApple);
-
-	IMAGE imgHead;
-	TCHAR str[100];
-	_stprintf(str, L".\\she\\head%d.bmp", 1);
-	loadimage(&imgHead, str);
-	putimage(3 * 30, 4 * 30, &imgHead);
-
-	IMAGE imgBody;
-	loadimage(&imgBody, L".\\she\\body.bmp");
-	putimage(3 * 30, 5 * 30, &imgBody);
-	putimage(3 * 30, 6 * 30, &imgBody);
+	putimage(appleLie * 30, appleHang * 30, &imgApple);//前面是列，后面是行
+	putimage(snakelie[0] * 30, snakehang[0] * 30, imgHead + fangxiang);//首次是向上的
+	//对于身体的生成
+	for (int i = 1; i < snakeLength; i++)
+	{
+		putimage(snakelie[i] * 30, snakehang[i] * 30, &imgBody);
+	}
 }
 //TODO: 5 定时处理位置
 void gameInterval()
 {
+	//TODO:T 爬
+	// 由尾部来追头部实现移动
+	
+	snakehang[4] = snakehang[3];
+	snakelie[4] = snakelie[3];
 
+	snakehang[3] = snakehang[2];
+	snakelie[3] = snakelie[2];
+
+	snakehang[2] = snakehang[1];
+	snakelie[2] = snakelie[1];
+
+	snakehang[1] = snakehang[0];
+	snakelie[1] = snakelie[0];
+
+	//蛇头的移动
+	switch (fangxiang)
+	{
+	case 0:
+		snakelie[0]++;
+		break;
+	case 1:
+		snakehang[0]--;
+		break;
+	case 2:
+		snakelie[0]--;
+		break;
+	case 3:
+		snakehang[0]++;
+		break;
+	default:
+		break;
+	}
+	if (0)//TODO: T 能吃
+	{
+		//TODO: T 变长
+
+
+		//TODO: T 生成新苹果
+
+	}
+	if (0)//TODO: T 能出界
+	{
+		//TODO:T gameover
+		stop = 1;
+	}
+	if (0)//TODO: T 能咬自己
+	{
+		//TODO: T gameover
+		stop = 1;
+	}
 }
 //TODO: 6 处理键盘控制位置
 void gameKeypress(int key)
@@ -289,16 +352,20 @@ void gameKeypress(int key)
 	switch (key)
 	{
 	case VK_LEFT:
-
+		//printf("按下了 左\n");
+		fangxiang = 2;
 		break;
 	case VK_RIGHT:
-
+		//printf("按下了 右\n");
+		fangxiang = 0;
 		break;
 	case VK_UP:
-
+		fangxiang = 1;
+		//printf("按下了 上\n");
 		break;
 	case VK_DOWN:
-
+		fangxiang = 3;
+		//printf("按下了 下\n");
 		break;
 	}
 
@@ -308,12 +375,12 @@ void gameKeypress(int key)
 //TODO: 7 处理鼠标控制位置
 void gameMouseDown(int mouseX, int mouseY)
 {
-
+	printf("按下了 鼠标下\n");
 
 }
 void gameMouseUp(int mouseX, int mouseY)
 {
-
+	printf("按下了 鼠标上\n");
 }
 void gameMousemove(int mouseX, int mouseY)
 {
