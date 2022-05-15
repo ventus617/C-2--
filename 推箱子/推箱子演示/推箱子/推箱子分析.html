@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE> New Document </TITLE>
+<META NAME="Generator" CONTENT="EditPlus">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META NAME="Author" CONTENT="">
+<META NAME="Keywords" CONTENT="">
+<META NAME="Description" CONTENT="">
+</HEAD>
+<style>
+	#zb
+	{
+		border:1px solid #FF0000;
+		border-collapse :collapse;
+		color:#000;
+	}
+
+	#zb tr td
+	{
+		border:1px solid #FF0000;
+
+	}
+
+	.piao
+	{
+		float:left;
+	}
+
+	.kuai
+	{
+		border:1px solid red;
+		width:30px;
+		height:30px;
+		margin:1px;
+	}
+</style>
+<BODY  >
+	
+ 	<button  id="cd0" style="position:absolute;left:380px;top:25px;background-image:url('场地/0.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;" onclick="addChangDi(this)">0</button>
+
+	<button id="cd1" style="position:absolute;left:380px;top:65px;background-image:url('场地/1.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;" onclick="addChangDi(this)">1</button>
+
+	<button  id="cd2"style="position:absolute;left:380px;top:105px;background-image:url('场地/2.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;" onclick="addChangDi(this)">2</button>
+
+	<button id="cd3"  style="position:absolute;left:380px;top:145px;background-image:url('场地/3.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;" onclick="addChangDi(this)">3</button>
+
+	<button id="ren" style="position:absolute;left:430px;top:25px;background-image:url('人/人.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;z-index:100" onclick="">人</button>
+	
+	<button style="position:absolute;left:430px;top:65px;background-image:url('箱子/箱子.GIF');width:30px;height:30px;color:red;border:0px solid #ccc;" onclick="addChangDi(this)">箱子</button>
+ 
+	<button style="position:absolute;left:380px;top:185px;" onclick="window.location.reload()">刷新重来</button>
+
+
+  	<button style="position:absolute;left:6px;top:306px;" onclick="fangAn('A')">方案A</button>
+ 
+	<TEXTAREA id="daiMa"  style="position:absolute;left:6px;top:356px;width:300;height:200;" ></TEXTAREA>
+</BODY>
+<SCRIPT LANGUAGE="JavaScript">
+/*
+	JS实现页面元素的拖放
+	思路：1.页面上一个时间只有一个东西可以拖放
+			 2.拖放就是HTML对象按下(onmousedown，开始拖)  document的onmousemove（移动）
+			HTML对象的抬起(onmouseup:放下);
+*/
+ function DragDrop(id){
+	this.html = (typeof id =='string'? document.getElementById(id):id);
+	var me = this;
+	this.downX = 0;
+	this.downY = 0;
+	this.init = function(){
+		this.html.style.position="absolute";
+		this.html.style.left=this.html.offsetLeft+"px";
+		this.html.style.top=this.html.offsetTop+"px";
+		this.html.onmousedown = function(e){
+					e = e||event;
+					me.downX = e.clientX-parseInt(this.style.left);
+					me.downY = e.clientY-parseInt(this.style.top);
+					DragDrop.nowDrag = me;
+					return false;
+		}
+		this.html.onmouseup = function(e){
+					e = e||event;
+					DragDrop.nowDrag = null;
+					return false;
+		}
+
+	}
+	this.move = function(x,y){
+		 
+		this.html.style.left = x-this.downX+"px";
+		this.html.style.top = y-this.downY+"px";
+	}
+	this.init();
+ }
+ //类的全局变量写法 相当于java的static变量
+ DragDrop.nowDrag = null;
+  //类的全局函数写法 相当于java的static函数
+ DragDrop.init = function(){
+	  document.onmousemove = function(e){
+			e = e||event;
+		if( DragDrop.nowDrag != null ){
+			DragDrop.nowDrag.move(e.clientX,e.clientY);
+		}
+		 return false;
+	 }
+ }
+  DragDrop.init();
+
+ </SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+	//表格（坐标）:刻度 行列
+	//行列， 单元格宽度
+    function zuoBiaoXi(hang,lie,kuan,px,py)
+	{
+		var table  = document.createElement("table");
+		table.border="1";
+		table.style.width=lie*kuan+"px";
+		table.style.height=hang*kuan+"px";
+//		alert(table.style.width+"  "+table.style.height )
+		table.id = "zb";
+ 		table.style.position="absolute";
+		table.style.left=px+"px";
+		table.style.top=py+"px";
+		document.body.appendChild(table);
+
+		for(var h=0;h<hang;h++)
+		{
+			var tr = table.insertRow(h);
+			for(var l=0;l<lie;l++)
+			{
+				var td = tr.insertCell(l);
+				td.innerHTML = "&nbsp;";
+				td.style.width=kuan+"px";
+				td.style.height=kuan+"px";
+			
+				if(h==hang-1){
+					td.style.fontSize="8pt";
+					td.innerHTML = l*kuan;
+					td.style.padding="0px";
+					td.align="left";
+					td.style.verticalAlign ="bottom";
+				}
+
+				if( h==0){
+					td.style.fontSize="12pt";
+					td.innerHTML = l;
+					td.style.padding="0px";
+					td.align="left";
+					td.style.verticalAlign ="top";
+				}
+
+				if(l==lie-1&&h>0)
+				{
+					td.style.fontSize="8pt";
+					td.innerHTML = h*kuan;
+					td.style.padding="0px";
+					td.align="right";
+					td.style.verticalAlign ="top";
+				}
+				if(l==0)
+				{
+					td.style.fontSize="12pt";
+					td.innerHTML = h;
+					td.style.padding="0px";
+					td.align="left";
+					td.style.verticalAlign ="top";
+				}
+			}
+		}
+		return table;
+	}
+var t = zuoBiaoXi(10,10,30,0,0);
+var rongQi = document.createElement("div");
+rongQi.style.position = "absolute";
+rongQi.style.width="1px";
+rongQi.style.height="1px";
+rongQi.style.left="0px";
+rongQi.style.top="0px";
+rongQi.style.overflow="visible";
+//rongQi.style.border="1px solid red";
+document.body.appendChild(rongQi);
+ function addChangDi(w)
+ {
+	var cd = w.cloneNode(true);
+	rongQi.appendChild(cd);
+	cd.onclick = null;
+	new DragDrop(cd);
+	cd.style.left = parseInt(w.style.left)-20+"px";
+	cd.style.top = parseInt(w.style.top)-20+"px";
+	cd.focus();
+	cd.oncontextmenu = function()
+	{
+		this.parentNode.removeChild(this);
+		return false;
+	}
+	return cd;
+ }
+new DragDrop("ren");
+
+ </SCRIPT>
+ <SCRIPT LANGUAGE="JavaScript">
+function fangAn(w)
+{
+	rongQi.innerHTML = "";
+ 	switch(w)
+	{
+		case 'A':
+			var ges =   [
+				[ 2,2,1,1,1,1,1,1,2,2 ],
+				[ 2,2,1,0,0,0,0,1,2,2 ],
+				[ 2,2,1,0,0,0,0,1,1,1 ],
+				[ 1,1,1,0,0,0,0,0,0,1 ],
+				[ 1,0,0,0,0,0,0,1,1,1 ],
+				[ 1,0,0,0,0,0,0,1,2,2 ],
+				[ 1,1,1,1,1,0,0,1,2,2 ],
+				[ 2,2,2,2,1,0,0,1,2,2 ],
+				[ 2,2,2,2,1,1,1,1,2,2 ],
+				[ 2,2,2,2,2,2,2,2,2,2 ]
+			 ];
+			
+			break;
+		case 'B':
+			break;
+		case 'C':
+			break;
+	}
+
+	for(var h=0;h<ges.length;h++)
+	{
+		for(var l=0;l<ges[h].length;l++)
+		{
+			var cd = addChangDi(document.getElementById("cd"+ges[h][l]  ) );
+			//t.rows[h].cells[l].style.backgroundImage = document.getElementById("cd"+ges[h][l]  ) .style.backgroundImage 
+			cd.style.left = 30*l+"px";
+			cd.style.top = 30*h+"px";
+			cd.title=h+" 行 "+l+"列 ";
+			cd.style.opacity = "0.5";
+			cd.style.filter ="alpha(opacity=50)";
+			cd.onmouseover=function()
+			{
+				this.style.border="1px solid red";
+				this.style.opacity = "1";
+				this.style.filter ="alpha(opacity=100)";
+			}
+
+			cd.onmouseout=function()
+			{
+				this.style.border="0px solid red";
+				this.style.opacity = "0.5";
+				this.style.filter ="alpha(opacity=50)";
+			}
+
+			cd.onclick = function()
+			{
+				this.onmouseover = null;
+				this.onmouseout = null;
+			}
+		}
+	}
+ var str = "int ges[10][10] =   { \n"+
+				"	     { 2,2,1,1,1,1,1,1,2,2 },\n "+
+				"		{ 2,2,1,0,0,0,0,1,2,2 }, \n"+
+				"		{ 2,2,1,0,0,0,0,1,1,1 },\n "+
+				"		{ 1,1,1,0,0,0,0,0,0,1 },\n "+
+				"		{ 1,0,0,0,0,0,0,1,1,1 },\n "+
+				"		{ 1,0,0,0,0,0,0,1,2,2 },\n "+
+				"		{ 1,1,1,1,1,0,0,1,2,2 },\n "+
+				"		{ 2,2,2,2,1,0,0,1,2,2 },\n "+
+				"		{ 2,2,2,2,1,1,1,1,2,2 },\n "+
+				"		{ 2,2,2,2,2,2,2,2,2,2 }\n "+
+				 "	};"
+		document.getElementById("daiMa").innerHTML = str;
+}
+ </SCRIPT>
+</HTML>
