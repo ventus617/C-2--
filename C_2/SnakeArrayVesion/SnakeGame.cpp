@@ -255,8 +255,8 @@ IMAGE imgBody;
 IMAGE imgHead[4];
 
 int fangxiang=1;//蛇头的方向 1上 2左 3下 0右
-int appleLie = 5;//苹果所在列
-int appleHang = 4;//苹果所在行
+int appleLie ;//苹果所在列
+int appleHang ;//苹果所在行
 int snakehang[100] = {10,11,12,13,14};
 int snakelie[100] = { 10,10,10,10,10 };
 int snakeLength = 5;
@@ -296,18 +296,12 @@ void gameInterval()
 {
 	//TODO:T 爬
 	// 由尾部来追头部实现移动
+	for (int i=snakeLength-1;i>0;i--)
+	{
+		snakehang[i] = snakehang[i - 1];
+		snakelie[i] = snakelie[i - 1];
+	}
 	
-	snakehang[4] = snakehang[3];
-	snakelie[4] = snakelie[3];
-
-	snakehang[3] = snakehang[2];
-	snakelie[3] = snakelie[2];
-
-	snakehang[2] = snakehang[1];
-	snakelie[2] = snakelie[1];
-
-	snakehang[1] = snakehang[0];
-	snakelie[1] = snakelie[0];
 
 	//蛇头的移动
 	switch (fangxiang)
@@ -327,23 +321,28 @@ void gameInterval()
 	default:
 		break;
 	}
-	if (0)//TODO: T 能吃
+	if (snakehang[0]==appleHang&&snakelie[0]==appleLie)//TODO: T 能吃
 	{
 		//TODO: T 变长
-
-
+		snakeLength++;
 		//TODO: T 生成新苹果
-
+		appleHang = rand() % 16 + 2;
+		appleLie = rand() % 16 + 2;
 	}
-	if (0)//TODO: T 能出界
+	if (snakehang[0] == 0 || snakehang[0] == 19 || snakelie[0] == 0 || snakelie[0] == 19)//TODO: T 能出界
 	{
 		//TODO:T gameover
 		stop = 1;
 	}
-	if (0)//TODO: T 能咬自己
-	{
-		//TODO: T gameover
-		stop = 1;
+	if (snakehang[0] || snakelie[0])//TODO: T 能咬自己
+	{//TODO: T gameover
+		for (int i = 2; i < snakeLength; i++)
+		{
+			if (snakehang[0] == snakehang[i] && snakelie[0] == snakelie[i])
+			{
+				stop = 1;
+			}
+		}
 	}
 }
 //TODO: 6 处理键盘控制位置
