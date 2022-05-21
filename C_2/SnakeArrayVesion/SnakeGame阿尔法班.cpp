@@ -7,6 +7,7 @@
 #include<iostream>
 #include<string>
 #include<graphics.h>
+#include"snake.h"
 
 /*游戏界面绘制*/
 void gamePaint();
@@ -233,7 +234,7 @@ int testHit(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2)
 		y2 + h2 < y1);
 }
 // 主函数，开启游戏
-int main01()
+int main()
 {
 	initgraph(screenWidth, screenHeight, SHOWCONSOLE);
 	initgame();					// 初始化游戏
@@ -253,116 +254,72 @@ IMAGE imgBG;
 IMAGE imgApple;
 IMAGE imgBody;
 IMAGE imgHead[4];
-
-int fangxiang=1;//蛇头的方向 1上 2左 3下 0右
-int appleLie ;//苹果所在列
-int appleHang ;//苹果所在行
-int snakehang[100] = {10,11,12,13,14};
-int snakelie[100] = { 10,10,10,10,10 };
+//变量定义
+int fangXiang = 1;//蛇头的方向 1 上 2 左 3 下 0 右
+int appleLie = 5;//苹果所在列
+int appleHang = 4;//苹果所在列
+int snakeHang[100] = {10 ,11,12,13,14};
+int snakeLie[100] = {10,10,10,10,10};
 int snakeLength = 5;
 //TODO: 3 游戏初始化位置  
 void gameInit()
 {
-	srand((unsigned)time(0));
-	appleLie = rand() % 16 + 2;
-	appleHang = rand() % 16 + 2;
-
+	printf("初始了...");
+	srand( (unsigned)time(0) );
+	creatnewone();
 
 	loadimage(&imgBG, L".\\she\\bg.bmp");
 	loadimage(&imgApple, L".\\she\\apple.bmp");
 	loadimage(&imgBody, L".\\she\\body.bmp");
 	TCHAR str[100];
-	for (int i=0;i<4;i++)
+	for (int i=0 ; i<4;i++ )
 	{
 		_stprintf(str, L".\\she\\head%d.bmp", i);
-		loadimage(imgHead +i, str);
+		loadimage(imgHead+i, str);
 	}
+	
 }
 //TODO: 4 绘图处理位置  
 void gamePaint()
 {
-
 	putimage(0, 0, &imgBG);
-	putimage(appleLie * 30, appleHang * 30, &imgApple);//前面是列，后面是行
-	putimage(snakelie[0] * 30, snakehang[0] * 30, imgHead + fangxiang);//首次是向上的
-	//对于身体的生成
-	for (int i = 1; i < snakeLength; i++)
+	putimage(appleLie * 30, appleHang * 30, &imgApple);
+
+	putimage(snakeLie[0] * 30, snakeHang[0] * 30, imgHead+fangXiang);
+	for (int jie=1 ; jie<snakeLength; jie++)
 	{
-		putimage(snakelie[i] * 30, snakehang[i] * 30, &imgBody);
+		putimage(snakeLie[jie] * 30, snakeHang[jie] * 30, &imgBody);
 	}
+	
+	 
 }
 //TODO: 5 定时处理位置
 void gameInterval()
 {
-	//TODO:T 爬
-	// 由尾部来追头部实现移动
-	for (int i=snakeLength-1;i>0;i--)
-	{
-		snakehang[i] = snakehang[i - 1];
-		snakelie[i] = snakelie[i - 1];
-	}
+	//printf("定时了...\n");
+	//TODO: T 爬
+	snakemove();
+	//
 	
-
-	//蛇头的移动
-	switch (fangxiang)
-	{
-	case 0:
-		snakelie[0]++;
-		break;
-	case 1:
-		snakehang[0]--;
-		break;
-	case 2:
-		snakelie[0]--;
-		break;
-	case 3:
-		snakehang[0]++;
-		break;
-	default:
-		break;
-	}
-	if (snakehang[0]==appleHang
-		&&snakelie[0]==appleLie)//TODO: T 能吃
+	if ( haveit() )//TODO: T 能吃
 	{
 		//TODO: T 变长
-		snakeLength++;
-		//TODO: T 生成新苹果
-		appleHang = rand() % 16 + 2;
-		appleLie = rand() % 16 + 2;
+		grow();
+		//TODO: T 生新苹果
+		creatnewone();
 	}
-	if (snakehang[0] == 0 
-		|| snakehang[0] == 19 
-		|| snakelie[0] == 0 
-		|| snakelie[0] == 19)//TODO: T 能出界
+
+	if ( outofit()) //TODO: T 能出界
 	{
-		//TODO:T gameover
-		stop = 1;
+		//TODO: T gameover
+		gameover();
 	}
-	if (snakehang[0] || snakelie[0])//TODO: T 能咬自己
-	{//TODO: T gameover
-		for (int i = 2; i < snakeLength; i++)
-		{
-			if (snakehang[0] == snakehang[i] 
-				&& snakelie[0] == snakelie[i])
-			{
-				stop = 1;
-			}
-		}
+	
+	if (biteit()) //TODO: T 能咬自己
+	{
+		//TODO: T gameover
+		gameover();
 	}
-	//int nengyao = 0;//假设不能咬自己
-	//for (int j=1;j<snakeLength;j++)
-	//{
-	//	if (snakehang[0] == snakehang[j]
-	//		&& snakelie[0] == snakelie[j])
-	//	{
-	//		nengyao = 1;
-	//		break;
-	//	}
-	//}
-	//if (nengyao)
-	//{
-	//	stop=1;
-	//}
 }
 //TODO: 6 处理键盘控制位置
 void gameKeypress(int key)
@@ -370,32 +327,24 @@ void gameKeypress(int key)
 	switch (key)
 	{
 	case VK_LEFT:
-		if (fangxiang !=0)
-		{
-			//printf("按下了 左\n");
-			fangxiang = 2;
-		}
+		//printf("按下了 左..\n");
+		turnleft();
+		
 		break;
 	case VK_RIGHT:
-		if (fangxiang != 2)
-		{
-			//printf("按下了 右\n");
-			fangxiang = 0;
-		}
+		//printf("按下了 右..\n");
+		turnright();
+		
 		break;
 	case VK_UP:
-		if (fangxiang != 3)
-		{
-			fangxiang = 1;
-		}
-		//printf("按下了 上\n");
+		//printf("按下了 上..\n");
+		turnup();
+		
 		break;
 	case VK_DOWN:
-		if (fangxiang!=1)
-		{
-			fangxiang = 3;
-		}
-		//printf("按下了 下\n");
+		//printf("按下了 下..\n");
+		turndown();
+		
 		break;
 	}
 
@@ -405,12 +354,12 @@ void gameKeypress(int key)
 //TODO: 7 处理鼠标控制位置
 void gameMouseDown(int mouseX, int mouseY)
 {
-	printf("按下了 鼠标下\n");
+	printf("按下了 鼠标..\n");
 
 }
 void gameMouseUp(int mouseX, int mouseY)
 {
-	printf("按下了 鼠标上\n");
+
 }
 void gameMousemove(int mouseX, int mouseY)
 {
