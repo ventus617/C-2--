@@ -321,7 +321,8 @@ void gameInterval()
 	default:
 		break;
 	}
-	if (snakehang[0]==appleHang&&snakelie[0]==appleLie)//TODO: T 能吃
+	if (snakehang[0]==appleHang
+		&&snakelie[0]==appleLie)//TODO: T 能吃
 	{
 		//TODO: T 变长
 		snakeLength++;
@@ -329,7 +330,10 @@ void gameInterval()
 		appleHang = rand() % 16 + 2;
 		appleLie = rand() % 16 + 2;
 	}
-	if (snakehang[0] == 0 || snakehang[0] == 19 || snakelie[0] == 0 || snakelie[0] == 19)//TODO: T 能出界
+	if (snakehang[0] == 0 
+		|| snakehang[0] == 19 
+		|| snakelie[0] == 0 
+		|| snakelie[0] == 19)//TODO: T 能出界
 	{
 		//TODO:T gameover
 		stop = 1;
@@ -338,12 +342,27 @@ void gameInterval()
 	{//TODO: T gameover
 		for (int i = 2; i < snakeLength; i++)
 		{
-			if (snakehang[0] == snakehang[i] && snakelie[0] == snakelie[i])
+			if (snakehang[0] == snakehang[i] 
+				&& snakelie[0] == snakelie[i])
 			{
 				stop = 1;
 			}
 		}
 	}
+	//int nengyao = 0;//假设不能咬自己
+	//for (int j=1;j<snakeLength;j++)
+	//{
+	//	if (snakehang[0] == snakehang[j]
+	//		&& snakelie[0] == snakelie[j])
+	//	{
+	//		nengyao = 1;
+	//		break;
+	//	}
+	//}
+	//if (nengyao)
+	//{
+	//	stop=1;
+	//}
 }
 //TODO: 6 处理键盘控制位置
 void gameKeypress(int key)
@@ -351,19 +370,31 @@ void gameKeypress(int key)
 	switch (key)
 	{
 	case VK_LEFT:
-		//printf("按下了 左\n");
-		fangxiang = 2;
+		if (fangxiang != 0)
+		{
+			//printf("按下了 左\n");
+			fangxiang = 2;
+		}
 		break;
 	case VK_RIGHT:
-		//printf("按下了 右\n");
-		fangxiang = 0;
+		if (fangxiang != 2)
+		{
+			//printf("按下了 右\n");
+			fangxiang = 0;
+		}
 		break;
 	case VK_UP:
-		fangxiang = 1;
+		if (fangxiang != 3)
+		{
+			fangxiang = 1;
+		}
 		//printf("按下了 上\n");
 		break;
 	case VK_DOWN:
-		fangxiang = 3;
+		if (fangxiang!=1)
+		{
+			fangxiang = 3;
+		}
 		//printf("按下了 下\n");
 		break;
 	}
