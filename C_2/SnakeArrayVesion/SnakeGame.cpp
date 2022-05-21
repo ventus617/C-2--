@@ -370,7 +370,7 @@ void gameKeypress(int key)
 	switch (key)
 	{
 	case VK_LEFT:
-		if (fangxiang != 0)
+		if (fangxiang !=0)
 		{
 			//printf("╟╢обак вС\n");
 			fangxiang = 2;
