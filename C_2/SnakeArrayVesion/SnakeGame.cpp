@@ -233,7 +233,7 @@ int testHit(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2)
 		y2 + h2 < y1);
 }
 // 主函数，开启游戏
-int main01()
+int main()
 {
 	initgraph(screenWidth, screenHeight, SHOWCONSOLE);
 	initgame();					// 初始化游戏
@@ -301,7 +301,7 @@ void gameInterval()
 		snakehang[i] = snakehang[i - 1];
 		snakelie[i] = snakelie[i - 1];
 	}
-	
+
 
 	//蛇头的移动
 	switch (fangxiang)
@@ -340,7 +340,7 @@ void gameInterval()
 	}
 	if (snakehang[0] || snakelie[0])//TODO: T 能咬自己
 	{//TODO: T gameover
-		for (int i = 2; i < snakeLength; i++)
+		for (int i = 1; i < snakeLength; i++)
 		{
 			if (snakehang[0] == snakehang[i] 
 				&& snakelie[0] == snakelie[i])

@@ -18,6 +18,9 @@
     <ClCompile Include="随机数.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SnakeGame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="SnakeGame阿尔法班.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
